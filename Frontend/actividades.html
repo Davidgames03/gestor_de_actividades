@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Actividades</title>
+    <link rel="stylesheet" href="CSS/actividades.css">
+</head>
+<body>
+    <div class="contenedor">
+        <h1>Gestión de Actividades de Empleados</h1>
+
+        <!-- Formulario para registrar actividad -->
+        <section class="card">
+            <h2>Registrar Nueva Actividad</h2>
+            <form id="formActividad">
+                <div class="grupo-input">
+                    <label for="nombre">Nombre de la Actividad:</label>
+                    <input type="text" id="nombre" required placeholder="Ej: Redactar reporte">
+                </div>
+                
+                <div class="grupo-input">
+                    <label for="estado">Estado Inicial:</label>
+                    <select id="estado">
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="En proceso">En proceso</option>
+                        <option value="Completada">Completada</option>
+                    </select>
+                </div>
+
+                <button type="submit">Guardar Actividad</button>
+            </form>
+        </section>
+
+        <!-- Tabla para consultar y actualizar actividades -->
+        <section class="card">
+            <h2>Lista de Actividades</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Actividad</th>
+                        <th>Estado Actual</th>
+                        <th>Cambiar Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaActividades">
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <script src="JS/actividades.js"></script>
+</body>
+</html>
