@@ -1,104 +1,112 @@
 const fs = require('fs');
 const path = require('path');
 
+// Aquí se guardan las actividades
 const RUTA_ARCHIVO = path.join(__dirname, '../actividades.txt');
 
+// Cada nodo es una actividad
 class Nodo {
     constructor(id, nombre, estado) {
         this.id = id;
         this.nombre = nombre;
-        this.estado = estado; // 'Pendiente', 'En proceso', 'Completada'
+        this.estado = estado; 
         this.siguiente = null;
     }
 }
 
 class ListaEnlazada {
     constructor() {
-        this.cabeza = null;
+        this.cabeza = null; 
         this.cargarDesdeArchivo();
     }
 
-    // Carga los datos guardados en el TXT al iniciar el programa
+    // Cuando prende el servidor, lee el txt y arma la lista con lo que haya
     cargarDesdeArchivo() {
-        this.cabeza = null; // Limpia la lista en memoria
+        this.cabeza = null;
 
+        // si el archivo no existe, lo crea vacío
         if (!fs.existsSync(RUTA_ARCHIVO)) {
             fs.writeFileSync(RUTA_ARCHIVO, '', 'utf-8');
             return;
         }
 
-        const contenido = fs.readFileSync(RUTA_ARCHIVO, 'utf-8').trim();
-        if (!contenido) return;
+        const lineas = fs.readFileSync(RUTA_ARCHIVO, 'utf-8').split(/\r?\n/);
 
-        const lineas = contenido.split('\n');
         lineas.forEach(linea => {
-            if (linea.trim()) {
-                const [id, nombre, estado] = linea.split('|');
-                this.agregarNodo(Number(id), nombre, estado);
+            const partes = linea.split('|');
+            const id = Number(partes[0]);
+            if (partes.length === 3 && Number.isInteger(id)) {
+                this.agregarNodo(id, partes[1], partes[2]);
             }
         });
     }
 
-    // Guarda el estado actual de la lista en el TXT
+    // Escribe cada actividad en un renglón del txt
     guardarEnArchivo() {
         const lineas = [];
         let actual = this.cabeza;
         while (actual) {
-            lineas.push(`${actual.id}|${actual.nombre}|${actual.estado}`);
+            lineas.push(actual.id + '|' + actual.nombre + '|' + actual.estado);
             actual = actual.siguiente;
         }
         fs.writeFileSync(RUTA_ARCHIVO, lineas.join('\n'), 'utf-8');
     }
 
-    // Agrega actividad al final de la lista
+    // Agrega una actividad al final y la guarda en el txt
     agregar(nombre, estado) {
         let nuevoId = 1;
-        if (this.cabeza) {
-            let ultimo = this.cabeza;
-            while (ultimo.siguiente) {
-                ultimo = ultimo.siguiente;
-            }
+        let ultimo = this.cabeza;
+        while (ultimo && ultimo.siguiente) {
+            ultimo = ultimo.siguiente;
+        }
+        if (ultimo) {
             nuevoId = ultimo.id + 1;
         }
 
         this.agregarNodo(nuevoId, nombre, estado);
         this.guardarEnArchivo();
-        return { id: nuevoId, nombre, estado };
+        return { id: nuevoId, nombre: nombre, estado: estado };
     }
 
+    // Pone un nodo al final de la lista (solo en memoria, el txt no se toca)
     agregarNodo(id, nombre, estado) {
         const nuevoNodo = new Nodo(id, nombre, estado);
+
         if (!this.cabeza) {
             this.cabeza = nuevoNodo;
-        } else {
-            let actual = this.cabeza;
-            while (actual.siguiente) {
-                actual = actual.siguiente;
-            }
-            actual.siguiente = nuevoNodo;
+            return;
         }
+
+        // avanzo hasta el último nodo y lo enlazo ahí
+        let actual = this.cabeza;
+        while (actual.siguiente) {
+            actual = actual.siguiente;
+        }
+        actual.siguiente = nuevoNodo;
     }
 
+    // La paso a arreglo para poder mandarla a la página
     toArray() {
         const actividades = [];
         let actual = this.cabeza;
         while (actual) {
-            actividades.push({
-                id: actual.id,
-                nombre: actual.nombre,
-                estado: actual.estado
-            });
+            actividades.push({ id: actual.id, nombre: actual.nombre, estado: actual.estado });
             actual = actual.siguiente;
         }
         return actividades;
     }
 
-    // Actualiza el estado de una actividad por un ID
-    actualizarEstado(id, nuevoEstado) {
+    // Busca la actividad por su id y le cambia lo que haya llegado
+    actualizar(id, nuevoNombre, nuevoEstado) {
         let actual = this.cabeza;
         while (actual) {
-            if (actual.id === Number(id)) {
-                actual.estado = nuevoEstado;
+            if (actual.id === id) {
+                if (nuevoNombre !== undefined) {
+                    actual.nombre = nuevoNombre;
+                }
+                if (nuevoEstado !== undefined) {
+                    actual.estado = nuevoEstado;
+                }
                 this.guardarEnArchivo();
                 return true;
             }

@@ -1,8 +1,14 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f6f8;
+    color: #333;
     margin: 0;
     padding: 20px;
+}
+    
+/* esconde lo que tenga esta clase */
+.oculto {
+    display: none;
 }
 
 .contenedor {
@@ -12,7 +18,12 @@ body {
 
 h1 {
     text-align: center;
-    color: #333;
+    color: #1f3a57;
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 20px;
 }
 
 .card {
@@ -20,7 +31,7 @@ h1 {
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .grupo-input {
@@ -33,12 +44,26 @@ label {
     font-weight: bold;
 }
 
-input[type="text"], select {
+small {
+    display: block;
+    margin-top: 4px;
+    color: #6b7280;
+}
+
+input[type="text"],
+select {
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 4px;
+    font-size: 14px;
+}
+
+input[type="text"]:focus,
+select:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 1px;
 }
 
 button {
@@ -47,11 +72,44 @@ button {
     padding: 10px 15px;
     border: none;
     border-radius: 4px;
+    font-size: 14px;
     cursor: pointer;
 }
 
 button:hover {
     background-color: #0056b3;
+}
+
+/* botones de menos importancia: Cancelar y Editar */
+button.secundario {
+    background-color: #e5e7eb;
+    color: #333;
+}
+
+button.secundario:hover {
+    background-color: #d1d5db;
+}
+
+/* avisos debajo del formulario */
+.mensaje {
+    margin: 15px 0 0;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.mensaje.ok {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.mensaje.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* la tabla se desliza de lado en pantallas chicas */
+.tabla-scroll {
+    overflow-x: auto;
 }
 
 table {
@@ -60,7 +118,8 @@ table {
     margin-top: 10px;
 }
 
-th, td {
+th,
+td {
     border: 1px solid #ddd;
     padding: 10px;
     text-align: left;
@@ -70,11 +129,21 @@ th {
     background-color: #f2f2f2;
 }
 
-.badge {
+tbody tr:hover {
+    background-color: #fafafa;
+}
+
+td.vacio {
+    text-align: center;
+    color: #6b7280;
+}
+
+.etiqueta {
     padding: 4px 8px;
     border-radius: 4px;
     color: white;
     font-size: 12px;
+    white-space: nowrap;
 }
 
 .pendiente { background-color: #ffc107; color: #000; }

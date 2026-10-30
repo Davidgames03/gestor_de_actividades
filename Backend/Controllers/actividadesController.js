@@ -1,19 +1,44 @@
-
 const listaActividades = require('../Models/ListaEnlazada');
 
-// Obtener todas las actividades que tenemos registradas
+// Estos son los únicos estados que deja guardar
+const ESTADOS = ['Pendiente', 'En proceso', 'Completada'];
+
+// Le quita los espacios de los lados al texto; si no es texto, regresa vacío
+function limpiarTexto(valor) {
+    return typeof valor === 'string' ? valor.trim() : '';
+}
+
+// Revisa el nombre. Si está mal regresa el aviso, y si está bien regresa vacío
+function errorDelNombre(nombre) {
+    if (nombre.length < 5) {
+        return 'El nombre es muy corto, escribe qué se va a hacer (mínimo 5 letras)';
+    }
+    if (nombre.length > 60) {
+        return 'El nombre es muy largo (máximo 60 letras)';
+    }
+    if (nombre.includes('|') || /[\r\n]/.test(nombre)) {
+        return 'El nombre no puede llevar el símbolo | ni saltos de línea';
+    }
+    return '';
+}
+
+// Regresa todas las actividades
 const obtenerActividades = (req, res) => {
-    const actividades = listaActividades.toArray();
-    res.json(actividades);
+    res.json(listaActividades.toArray());
 };
 
-// Agregar una nueva actividad a la lista
+// Registra una actividad nueva
 const crearActividad = (req, res) => {
-    const { nombre, estado } = req.body;
+    const datos = req.body || {};
+    const nombre = limpiarTexto(datos.nombre);
+    const estado = datos.estado;
 
-    // Revisa que los dos campos tengan información
-    if (!nombre || !estado) {
-        return res.status(400).json({ mensaje: 'Nombre y estado son obligatorios' });
+    const problema = errorDelNombre(nombre);
+    if (problema) {
+        return res.status(400).json({ mensaje: problema });
+    }
+    if (!ESTADOS.includes(estado)) {
+        return res.status(400).json({ mensaje: 'El estado debe ser Pendiente, En proceso o Completada' });
     }
 
     const nuevaActividad = listaActividades.agregar(nombre, estado);
@@ -23,24 +48,27 @@ const crearActividad = (req, res) => {
     });
 };
 
-// Cambia el estado de una actividad que ya existe
+// Cambia el nombre o el estado de una actividad que ya existe
 const actualizarActividad = (req, res) => {
-    const { id } = req.params;
-    const { estado } = req.body;
+    const id = Number(req.params.id);
+    const datos = req.body || {};
+    const nombre = datos.nombre === undefined ? undefined : limpiarTexto(datos.nombre);
+    const estado = datos.estado;
 
-    // Verifica que se haya escrito el nuevo estado
-    if (!estado) {
-        return res.status(400).json({ mensaje: 'El nuevo estado es obligatorio' });
+    if (nombre === undefined && estado === undefined) {
+        return res.status(400).json({ mensaje: 'No llegó nada para cambiar' });
+    }
+    if (nombre !== undefined && errorDelNombre(nombre)) {
+        return res.status(400).json({ mensaje: errorDelNombre(nombre) });
+    }
+    if (estado !== undefined && !ESTADOS.includes(estado)) {
+        return res.status(400).json({ mensaje: 'El estado debe ser Pendiente, En proceso o Completada' });
     }
 
-    const actualizado = listaActividades.actualizarEstado(id, estado);
-
-    // Si se encuentra la actividad, se confirma el cambio
-    if (actualizado) {
-        res.json({ mensaje: 'Estado actualizado correctamente' });
+    if (listaActividades.actualizar(id, nombre, estado)) {
+        res.json({ mensaje: 'Actividad actualizada correctamente' });
     } else {
-        // Si no existe una actividad con ese ID, se avisa
-        res.status(404).json({ mensaje: 'Actividad no encontrada' });
+        res.status(404).json({ mensaje: 'No existe una actividad con ese ID' });
     }
 };
 

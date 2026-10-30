@@ -10,17 +10,19 @@
     <div class="contenedor">
         <h1>Gestión de Actividades de Empleados</h1>
 
-        <!-- Formulario para registrar actividad -->
+        <!-- Formulario para registrar una actividad (también sirve para editarla) -->
         <section class="card">
-            <h2>Registrar Nueva Actividad</h2>
+            <h2 id="tituloFormulario">Registrar Nueva Actividad</h2>
             <form id="formActividad">
                 <div class="grupo-input">
                     <label for="nombre">Nombre de la Actividad:</label>
-                    <input type="text" id="nombre" required placeholder="Ej: Redactar reporte">
+                    <input type="text" id="nombre" required minlength="5" maxlength="60"
+                           placeholder="Ej: Redactar el reporte mensual de ventas">
+                    <small>Escribe qué se va a hacer, entre 5 y 60 letras.</small>
                 </div>
-                
+
                 <div class="grupo-input">
-                    <label for="estado">Estado Inicial:</label>
+                    <label for="estado">Estado:</label>
                     <select id="estado">
                         <option value="Pendiente">Pendiente</option>
                         <option value="En proceso">En proceso</option>
@@ -28,27 +30,35 @@
                     </select>
                 </div>
 
-                <button type="submit">Guardar Actividad</button>
+                <button type="submit" id="botonGuardar">Guardar Actividad</button>
+                <button type="button" id="botonCancelar" class="secundario oculto">Cancelar</button>
             </form>
+
+            <!-- Aquí salen los avisos de lo que pasó -->
+             <p id="mensaje" class="mensaje oculto"></p>
         </section>
 
-        <!-- Tabla para consultar y actualizar actividades -->
+        <!-- Tabla para consultar y actualizar las actividades -->
         <section class="card">
             <h2>Lista de Actividades</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Actividad</th>
-                        <th>Estado Actual</th>
-                        <th>Cambiar Estado</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaActividades">
-                </tbody>
-            </table>
+            <div class="tabla-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Actividad</th>
+                            <th>Estado Actual</th>
+                            <th>Cambiar Estado</th>
+                            <th>Editar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaActividades">
+                    </tbody>
+                </table>
+            </div>
         </section>
     </div>
+
     <script src="JS/actividades.js"></script>
 </body>
 </html>

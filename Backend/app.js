@@ -1,31 +1,31 @@
-
 const express = require('express');
 const path = require('path');
 
-// Carga los datos del archivo .env
+// Lee el puerto del archivo .env 
 require('dotenv').config();
 
-// Importa las rutas de las actividades
 const actividadesRouters = require('./Routers/actividadesRouters');
 
 const app = express();
 
-// Permite que el servidor pueda leer los datos que recibe
+// Para que el servidor entienda lo que manda la página
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Indica dónde están los archivos del frontend
+// Aquí están el html, el css y el js de la página
 app.use(express.static(path.join(__dirname, '../Frontend')));
 
-// Usa las rutas para trabajar con las actividades
+// Las rutas de las actividades
 app.use(actividadesRouters);
 
-// Muestra la página principal al entrar al sitio
+// Al entrar al sitio muestra la página de actividades
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../Frontend/actividades.html'));
 });
 
-// Inicia el servidor
-app.listen(process.env.PORT, () => {
-    console.log('Servidor ejecutandose en el puerto ' + process.env.PORT);
+// Si no hay .env uso el puerto 3000 para que arranque igual
+const PUERTO = process.env.PORT || 3000;
+
+app.listen(PUERTO, () => {
+    console.log('Servidor encendido en http://localhost:' + PUERTO);
 });
